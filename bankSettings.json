@@ -1,0 +1,45 @@
+{
+    "LCL":
+        {
+            "URL_Login": "https://particuliers.secure.lcl.fr/outil/UAUT?from=/outil/UWHO/Accueil/",
+            "URL_Solde": "https://particuliers.secure.lcl.fr/outil/UWSP/Synthese",
+            "HTML_ID_Clavier": "idImageClavier",
+            "HTML_ID_TouchesClavier":  ["idImageClavier_01","idImageClavier_03","idImageClavier_05","idImageClavier_07","idImageClavier_09",
+                                  "idImageClavier_02", "idImageClavier_04", "idImageClavier_06", "idImageClavier_08", "idImageClavier_10"],
+            "HTML_ID_Identifiant": "identifiantIdForm",
+            "HTML_ID_BoutonSubmit": "validerClavierCLI",
+            "HTML_ID_Solde": "validerClavierCLI",
+            "GRILLE_nb_Col": 5,
+            "GRILLE_nb_Ligne": 2,
+            "NOM_Banque": "LCL"
+        },
+
+    "HELLOBANK":
+        {
+            "URL_Login": "https://particuliers.secure.lcl.fr/outil/UAUT?from=/outil/UWHO/Accueil/",
+            "URL_Solde": "https://particuliers.secure.lcl.fr/outil/UWSP/Synthese",
+            "HTML_ID_Clavier": "idImageClavier",
+            "HTML_ID_TouchesClavier":  ["idImageClavier_01","idImageClavier_03","idImageClavier_05","idImageClavier_07","idImageClavier_09",
+                                  "idImageClavier_02", "idImageClavier_04", "idImageClavier_06", "idImageClavier_08", "idImageClavier_10"],
+            "HTML_ID_Identifiant": "identifiantIdForm",
+            "HTML_ID_BoutonSubmit": "validerClavierCLI",
+            "GRILLE_nb_Col": 5,
+            "GRILLE_nb_Ligne": 2,
+            "NOM_Banque": "HELLOBANK"
+        },
+
+    "SOCIETEGENERALE":
+        {
+            "URL_Login": "https://particuliers.secure.lcl.fr/outil/UAUT?from=/outil/UWHO/Accueil/",
+            "URL_Solde": "https://particuliers.secure.lcl.fr/outil/UWSP/Synthese",
+            "HTML_ID_Clavier": "idImageClavier",
+            "HTML_ID_TouchesClavier":  ["idImageClavier_01","idImageClavier_03","idImageClavier_05","idImageClavier_07","idImageClavier_09",
+                                  "idImageClavier_02", "idImageClavier_04", "idImageClavier_06", "idImageClavier_08", "idImageClavier_10"],
+            "HTML_ID_Identifiant": "identifiantIdForm",
+            "HTML_ID_BoutonSubmit": "validerClavierCLI",
+            "GRILLE_nb_Col": 5,
+            "GRILLE_nb_Ligne": 2,
+            "NOM_Banque": "SOCIETEGENERALE"
+        }
+
+}

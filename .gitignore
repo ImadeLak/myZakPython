@@ -1,0 +1,6 @@
+envPython
+__pycache__
+UNSET_PYTHONPATH
+*.png
+.DS_Store
+db.sqlite3
