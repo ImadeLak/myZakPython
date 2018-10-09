@@ -65,6 +65,21 @@ for user in users:
     if len(compteBancaires) > 0 :
         historique_user = Historique.objects.filter(utilisateur=user)[0]
         historique_user.historique_banque['dates'].append(nouvelItem)
+
+        #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
+        lastBloc = historique_user.blocs['blocs'][-1]
+        #logging.info(lastBloc)
+        bloc = {
+            "ID" : lastBloc["ID"]+1,
+            "nature":"maj_banque_auto",
+            "date":str(datetime.now()),
+            "solde_banque" : nouvelItem,
+            "solde_espece" : lastBloc["solde_espece"],
+            "solde_immo" : lastBloc["solde_immo"],
+            "etat" : "actif"
+        }
+        historique_user.blocs['blocs'].append(bloc)
+
         historique_user.save()
         #print ("JSON",json.dumps(historique_user.historique_banque))
         print(json.dumps(nouvelItem))

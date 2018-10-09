@@ -95,7 +95,7 @@ class HistoriqueViewSet(viewsets.ModelViewSet):
 
 
 
-
+#OLD
 class oldGetSituation(generics.ListAPIView):
 
     serializer_class = SituationSerializer
@@ -110,6 +110,8 @@ class oldGetSituation(generics.ListAPIView):
 
         return Situation.objects.filter(utilisateur=user)
 
+
+#OLD
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def getSituation(request):
@@ -230,7 +232,24 @@ def historiqueEspece(request):
             'date':str(datetime.now()),
         }
         historique.historique_espece['dates'].append(data)
+
+        #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
+
+        lastBloc = historique.blocs['blocs'][-1]
+        bloc = {
+            "ID" : lastBloc["ID"]+1,
+            "nature":"maj_espece",
+            "date":str(datetime.now()),
+            "solde_banque" : lastBloc["solde_banque"],
+            "solde_espece" : request.data['montant'],
+            "solde_immo" : lastBloc["solde_immo"],
+            "etat" : "actif"
+        }
+        historique.blocs['blocs'].append(bloc)
+
         historique.save()
+
+
 
         return Response(historique.historique_espece, status=status.HTTP_200_OK)
 
@@ -265,10 +284,43 @@ def historiqueImmo(request):
             'date':str(datetime.now()),
         }
         historique.historique_immo['dates'].append(data)
+
+        #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
+        logging.info(historique.blocs)
+        lastBloc = historique.blocs['blocs'][-1]
+        bloc = {
+            "ID" : lastBloc["ID"]+1,
+            "nature":"maj_immo",
+            "date":str(datetime.now()),
+            "solde_banque" : lastBloc["solde_banque"],
+            "solde_espece" : lastBloc["solde_espece"],
+            "solde_immo" : request.data['montant'],
+            "etat" : "actif"
+        }
+        historique.blocs['blocs'].append(bloc)
+
         historique.save()
 
         return Response(historique.historique_immo, status=status.HTTP_200_OK)
 
+@api_view(['PUT', 'GET'])
+@permission_classes((IsAuthenticated,))
+def majEtatBloc(request):
+
+    if request.method == 'PUT':
+        logging.info(request.data)
+        token_recu = request.META['HTTP_AUTHORIZATION'].replace('Token ','')
+        user_id = Token.objects.get(key=token_recu).user_id
+        user = User.objects.get(id=user_id)
+        historique = Historique.objects.filter(utilisateur=user)[0]
+
+        for bloc in historique.blocs['blocs']:
+            if bloc['ID'] == request.data['ID']:
+                bloc['etat'] = request.data['etat']
+                break;
+
+        historique.save()
+        return Response(historique.blocs['blocs'], status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -305,22 +357,37 @@ def majSolde(request):
             if len(comptesBancaires) > 0 :
                 historique_user = Historique.objects.filter(utilisateur=user)[0]
                 historique_user.historique_banque['dates'].append(nouvelItem)
+
+                #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
+
+                lastBloc = historique_user.blocs['blocs'][-1]
+                #logging.info(lastBloc)
+                bloc = {
+                    "ID" : lastBloc["ID"]+1,
+                    "nature":"maj_banque_manu",
+                    "date":str(datetime.now()),
+                    "solde_banque" : nouvelItem,
+                    "solde_espece" : lastBloc["solde_espece"],
+                    "solde_immo" : lastBloc["solde_immo"],
+                    "etat" : "actif"
+                }
+                historique_user.blocs['blocs'].append(bloc)
                 historique_user.save()
                 print(json.dumps(nouvelItem))
 
             endTime = time.time()
             tempsTotal = round(endTime - startTime,2)
-            return Response(tempsTotal, status=status.HTTP_200_OK)
+            return Response(str(tempsTotal)+' sec', status=status.HTTP_200_OK)
 
 
 
-
+#OLD
 class weshCompteBancaire(generics.RetrieveUpdateDestroyAPIView):
             queryset = CompteBancaire.objects.all()
             serializer_class = CompteBancaireSerializer
 
 
-
+#OLD
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes((IsAuthenticated, ))
 def bonjour_appel(request):

@@ -42,6 +42,7 @@ urlpatterns = [
     url(r'^historique_espece/', views.historiqueEspece),
     url(r'^historique_immo/', views.historiqueImmo),
     url(r'^majSolde/', views.majSolde),
+    url(r'^maj_etat_bloc/', views.majEtatBloc),
     url(r'^edit_compte_bancaire/(?P<pk>[0-9]+)/$', views.weshCompteBancaire.as_view() ),
     #url(r'^get_situation/', views.getSituation.as_view() ),
     url(r'^get_historique/', views.getSituation),
