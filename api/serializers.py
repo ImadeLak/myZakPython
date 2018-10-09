@@ -47,7 +47,8 @@ class HistoriqueSerializer(serializers.ModelSerializer):
     historique_immo = JSONSerializerField()
     historique_banque = JSONSerializerField()
     historique_espece = JSONSerializerField()
+    blocs = JSONSerializerField()
 
     class Meta:
         model = Historique
-        fields = ('id_historique','utilisateur','historique_banque','historique_espece','historique_immo')
+        fields = ('id_historique','utilisateur','historique_banque','historique_espece','historique_immo','blocs')

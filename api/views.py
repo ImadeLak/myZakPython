@@ -111,7 +111,7 @@ class oldGetSituation(generics.ListAPIView):
         return Situation.objects.filter(utilisateur=user)
 
 
-#OLD
+#Renvoie tout
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def getSituation(request):
@@ -119,11 +119,11 @@ def getSituation(request):
     if request.method == 'GET':
 
         requestToken = request.META['HTTP_AUTHORIZATION'].replace('Token ','')
-
-        """ On va récupérer le User pour pouvoir filtrer les historiques """
         user_id = Token.objects.get(key=requestToken).user_id
         user = User.objects.get(id=user_id)
 
+
+        #On recupere les comptes bancaire du user
         cpts = CompteBancaire.objects.filter(utilisateur=user)
         comptesBancaires=[]
         for compte in cpts:
@@ -133,12 +133,11 @@ def getSituation(request):
             #comptesBancaires.append(CompteBancaireSerializer(compte).cpts)
             comptesBancaires.append(item)
 
-
-
+        #On recupere l'historique du user (comprend les blocs)
         historique = Historique.objects.filter(utilisateur=user)
 
         datas = {'situation':HistoriqueSerializer(historique[0]).data,
-         'infoUser':{'username':user.username, 'email':user.email}, 'comptes':comptesBancaires}
+         'infoUser':{'email':user.email}, 'comptes':comptesBancaires}
 
         return Response(datas, status=status.HTTP_200_OK)
 
