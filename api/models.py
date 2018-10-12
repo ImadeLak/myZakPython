@@ -84,9 +84,9 @@ class Situation(models.Model):
 class Historique(models.Model):
     id_historique=models.AutoField(primary_key=True)
     utilisateur=models.ForeignKey(User, on_delete=models.CASCADE)
-    historique_espece=JSONField(default='{"dates":[]}')
-    historique_immo=JSONField(default='{"dates":[]}')
-    historique_banque=JSONField(default='{"dates":[]}')
+    #historique_espece=JSONField(default='{"dates":[]}')
+    #historique_immo=JSONField(default='{"dates":[]}')
+    #historique_banque=JSONField(default='{"dates":[]}')
     blocs=JSONField(default='{"blocs":[{"ID":0,"nature":"init","date":"","solde_banque":0,"solde_espece":0,"solde_immo":0,"etat":"disabled"}]}')
 
     def __str__(self):

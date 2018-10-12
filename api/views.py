@@ -122,7 +122,6 @@ def getSituation(request):
         user_id = Token.objects.get(key=requestToken).user_id
         user = User.objects.get(id=user_id)
 
-
         #On recupere les comptes bancaire du user
         cpts = CompteBancaire.objects.filter(utilisateur=user)
         comptesBancaires=[]
@@ -205,35 +204,14 @@ def compteBancaire(request):
 @permission_classes((IsAuthenticated,))
 def historiqueEspece(request):
 
-    if request.method == 'GET':
-        logging.info(request)
-        token_recu = request.META['HTTP_AUTHORIZATION'].replace('Token ','')
-
-        user_id = Token.objects.get(key=token_recu).user_id
-        user = User.objects.get(id=user_id)
-        historique = Historique.objects.filter(utilisateur=user)
-
-        return Response(historique[0].historique_espece, status=status.HTTP_200_OK)
-
-
-
     if request.method == 'PUT':
         logging.info(request.data)
-
         token_recu = request.META['HTTP_AUTHORIZATION'].replace('Token ','')
-
         user_id = Token.objects.get(key=token_recu).user_id
         user = User.objects.get(id=user_id)
         historique = Historique.objects.filter(utilisateur=user)[0]
 
-        data = {
-            'montant': request.data['montant'],
-            'date':str(datetime.now()),
-        }
-        historique.historique_espece['dates'].append(data)
-
         #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
-
         lastBloc = historique.blocs['blocs'][-1]
         bloc = {
             "ID" : lastBloc["ID"]+1,
@@ -245,47 +223,23 @@ def historiqueEspece(request):
             "etat" : "actif"
         }
         historique.blocs['blocs'].append(bloc)
-
         historique.save()
+        return Response(historique.blocs['blocs'], status=status.HTTP_200_OK)
 
 
-
-        return Response(historique.historique_espece, status=status.HTTP_200_OK)
 
 @api_view(['PUT', 'GET'])
 @permission_classes((IsAuthenticated,))
 def historiqueImmo(request):
 
-    if request.method == 'GET':
-        logging.info(request)
-
-        token_recu = request.META['HTTP_AUTHORIZATION'].replace('Token ','')
-
-        user_id = Token.objects.get(key=token_recu).user_id
-        user = User.objects.get(id=user_id)
-        historique = Historique.objects.filter(utilisateur=user)
-
-        return Response(historique[0].historique_immo, status=status.HTTP_200_OK)
-
-
-
     if request.method == 'PUT':
         logging.info(request.data)
-
         token_recu = request.META['HTTP_AUTHORIZATION'].replace('Token ','')
-
         user_id = Token.objects.get(key=token_recu).user_id
         user = User.objects.get(id=user_id)
         historique = Historique.objects.filter(utilisateur=user)[0]
 
-        data = {
-            'montant': request.data['montant'],
-            'date':str(datetime.now()),
-        }
-        historique.historique_immo['dates'].append(data)
-
         #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
-        logging.info(historique.blocs)
         lastBloc = historique.blocs['blocs'][-1]
         bloc = {
             "ID" : lastBloc["ID"]+1,
@@ -297,10 +251,9 @@ def historiqueImmo(request):
             "etat" : "actif"
         }
         historique.blocs['blocs'].append(bloc)
-
         historique.save()
+        return Response(historique.blocs['blocs'], status=status.HTTP_200_OK)
 
-        return Response(historique.historique_immo, status=status.HTTP_200_OK)
 
 @api_view(['PUT', 'GET'])
 @permission_classes((IsAuthenticated,))
@@ -327,26 +280,21 @@ def majSolde(request):
 
     startTime = time.time()
     if request.method == 'GET':
-
             token_recu = request.META['HTTP_AUTHORIZATION'].replace('Token ','')
             user_id = Token.objects.get(key=token_recu).user_id
             user = User.objects.get(id=user_id)
 
             comptesBancaires = CompteBancaire.objects.filter(utilisateur=user)
-
-            nouvelItem={
-                    "date_historique":str(datetime.now()),
-                    "cron":False,
-                    "comptes_bancaires":[]
-            }
-
+            nouvelItem=[]
+            #Pour chaque compte de l'utilisateur n va recuperer son solde via Weboob
             for cpt in comptesBancaires:
                 print("\tRecuperation des datas de " + cpt.utilisateur.username + " chez " + cpt.banque.nom_banque + " ID:"+ str(cpt.id_compteBancaire) )
                 datas = getDatas(cpt.banque.wb_banque,cpt.login_compteBancaire,cpt.password_compteBancaire,cpt.banque.wb_website)
                 datas = json.loads(datas)
 
-                nouvelItem["comptes_bancaires"].append({
+                nouvelItem.append({
                     "id_compteBancaire":cpt.id_compteBancaire,
+                    "date":str(datetime.now()),
                     "nom_banque":cpt.banque.nom_banque,
                     "status":datas["status"],
                     "solde":datas["solde"],
@@ -354,13 +302,9 @@ def majSolde(request):
                 })
 
             if len(comptesBancaires) > 0 :
-                historique_user = Historique.objects.filter(utilisateur=user)[0]
-                historique_user.historique_banque['dates'].append(nouvelItem)
-
+                historique = Historique.objects.filter(utilisateur=user)[0]
                 #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
-
-                lastBloc = historique_user.blocs['blocs'][-1]
-                #logging.info(lastBloc)
+                lastBloc = historique.blocs['blocs'][-1]
                 bloc = {
                     "ID" : lastBloc["ID"]+1,
                     "nature":"maj_banque_manu",
@@ -370,13 +314,13 @@ def majSolde(request):
                     "solde_immo" : lastBloc["solde_immo"],
                     "etat" : "actif"
                 }
-                historique_user.blocs['blocs'].append(bloc)
-                historique_user.save()
-                print(json.dumps(nouvelItem))
+                historique.blocs['blocs'].append(bloc)
+                historique.save()
 
             endTime = time.time()
             tempsTotal = round(endTime - startTime,2)
-            return Response(str(tempsTotal)+' sec', status=status.HTTP_200_OK)
+            print ("temps total: "+ str(tempsTotal)+' sec')
+            return Response(historique.blocs['blocs'], status=status.HTTP_200_OK)
 
 
 
