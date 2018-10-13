@@ -38,11 +38,7 @@ for user in users:
     compteBancaires = CompteBancaire.objects.filter(utilisateur=user)
     #soldeBanque = 0
 
-    nouvelItem={
-            "date_historique":str(datetime.now()),
-            "cron":True,
-            "comptes_bancaires":[]
-    }
+    nouvelItem=[]
     for cpt in compteBancaires:
         print("\tRecuperation des datas de " + cpt.utilisateur.username + " chez " + cpt.banque.nom_banque + " ID:"+ str(cpt.id_compteBancaire) )
 
@@ -51,8 +47,9 @@ for user in users:
         datas = json.loads(datas)
         #historique_user = Historique.objects.filter(utilisateur=user)[0]
 
-        nouvelItem["comptes_bancaires"].append({
+        nouvelItem.append({
             "id_compteBancaire":cpt.id_compteBancaire,
+            "date":str(datetime.now()),
             "nom_banque":cpt.banque.nom_banque,
             "status":datas["status"],
             "solde":datas["solde"],
@@ -64,7 +61,7 @@ for user in users:
         #print(historique_user.historique_banque['dates'])
     if len(compteBancaires) > 0 :
         historique_user = Historique.objects.filter(utilisateur=user)[0]
-        historique_user.historique_banque['dates'].append(nouvelItem)
+        #historique_user.historique_banque['dates'].append(nouvelItem)
 
         #On recupere le dernier blocs, on maj le solde espece et on append avec un nouvel ID et une nouvelle date
         lastBloc = historique_user.blocs['blocs'][-1]
