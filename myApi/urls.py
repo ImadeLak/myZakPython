@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
-from api import views
+from appMyZak import views
 
 
 from rest_framework.authtoken import views as rest_framework_views

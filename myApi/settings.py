@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
+    'appMyZak',
     'rest_framework',
     'rest_framework.authtoken'
 ]
@@ -141,3 +141,5 @@ REST_FRAMEWORK = {
 
     #...
 }
+
+AUTH_USER_MODEL = 'appMyZak.UserCustom'
