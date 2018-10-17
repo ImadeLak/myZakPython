@@ -93,7 +93,18 @@ class HistoriqueViewSet(viewsets.ModelViewSet):
     queryset = Historique.objects.all()
     serializer_class = HistoriqueSerializer
 
-
+"""
+Creation d'un users
+"""
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def createUser(request):
+    serialized = UserSerializer(data=request.data)
+    if serialized.is_valid():
+        serialized.save()
+        return Response(serialized.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
 #OLD
 class oldGetSituation(generics.ListAPIView):
