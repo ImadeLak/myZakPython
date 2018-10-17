@@ -299,7 +299,7 @@ def majSolde(request):
             nouvelItem=[]
             #Pour chaque compte de l'utilisateur n va recuperer son solde via Weboob
             for cpt in comptesBancaires:
-                print("\tRecuperation des datas de " + cpt.utilisateur.username + " chez " + cpt.banque.nom_banque + " ID:"+ str(cpt.id_compteBancaire) )
+                print("\tRecuperation des datas de " + cpt.utilisateur.email + " chez " + cpt.banque.nom_banque + " ID:"+ str(cpt.id_compteBancaire) )
                 datas = getDatas(cpt.banque.wb_banque,cpt.login_compteBancaire,cpt.password_compteBancaire,cpt.banque.wb_website)
                 datas = json.loads(datas)
 
@@ -366,7 +366,7 @@ def bonjour_appel(request):
                 username = "Ce token existe pas"
             else:
                 id = Token.objects.get(key=reqToken).user_id
-                username = UserCustom.objects.get(id=id).username
+                email = UserCustom.objects.get(id=id).email
 
         content={
          "phrase": "bonjour",
