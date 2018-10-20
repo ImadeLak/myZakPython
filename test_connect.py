@@ -12,16 +12,15 @@ application = get_wsgi_application()
 
 """ C'est la que tout commence !!!! """
 
-from django.contrib.auth.models import User, Group
-from api.models import Departement, Banque, CompteBancaire, Situation, Historique
-from Scraper import getSolde, getGrilleDecodee, getDatas
+from appMyZak.models import CompteBancaire, Historique, UserCustom
+from Scraper import  getDatas
 
 startTime = time.time()
 
 
 #Les settings des banques
-with open('bankSettings.json') as json_data:
-    bankSettings = json.load(json_data)
+#with open('bankSettings.json') as json_data:
+#    bankSettings = json.load(json_data)
 
 """ L'idee, pour chaque user, on recupere les compteBancaires associes,
     et apres on maj la historiques. Donc un fil de situation par user.
@@ -31,16 +30,16 @@ with open('bankSettings.json') as json_data:
     on mettra a jour leur historique, voila tout
 """
 
-users = User.objects.all()
+users = UserCustom.objects.all()
 for user in users:
     #On commence par parcourir tous les compte bancaire a mettre a jour
-    print ("Recuperation compte bancaire de", user.username)
+    print ("Recuperation compte bancaire de", user.email)
     compteBancaires = CompteBancaire.objects.filter(utilisateur=user)
     #soldeBanque = 0
 
     nouvelItem=[]
     for cpt in compteBancaires:
-        print("\tRecuperation des datas de " + cpt.utilisateur.username + " chez " + cpt.banque.nom_banque + " ID:"+ str(cpt.id_compteBancaire) )
+        print("\tRecuperation des datas de " + cpt.utilisateur.email + " chez " + cpt.banque.nom_banque + " ID:"+ str(cpt.id_compteBancaire) )
 
         #datas = getSolde(bankSettings[cpt.banque.nom_banque], cpt.login_compteBancaire, cpt.password_compteBancaire)
         datas = getDatas(cpt.banque.wb_banque,cpt.login_compteBancaire,cpt.password_compteBancaire,cpt.banque.wb_website)

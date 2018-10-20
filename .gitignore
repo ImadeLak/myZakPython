@@ -8,3 +8,5 @@ UNSET_PYTHONPATH
 db.sqlite3
 db.sqlite3.old
 bankSettings.json
+workDir
+dataDir
